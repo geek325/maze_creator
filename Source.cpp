@@ -18,10 +18,27 @@ int validneighbour(std::vector<std::vector<bool>>& isempty, int startx, int star
 }
 void creat_maze(std::vector<std::vector<std::vector<edge>>> &graph ,std::vector<std::vector<bool>> &isempty,int startx,int starty) {
 	int size = graph.size();
-	switch (validneighbour(isempty, startx, starty)) {
-	case 1:
-		graph[startx][starty].push_back(edge(startx,starty,startx-1,starty));
-		creat_maze(graph, isempty, startx - 1, starty - 1);
+	while (validneighbour(isempty, startx, starty)!=0) {
+		switch (validneighbour(isempty, startx, starty)) {
+		case 1://up
+			graph[startx][starty].push_back(edge(startx, starty, startx - 1, starty));
+			creat_maze(graph, isempty, startx - 1, starty);
+			break;
+		case 2://right
+			graph[startx][starty].push_back(edge(startx, starty, startx, starty + 1));
+			creat_maze(graph, isempty, startx, starty + 1);
+			break;
+		case 3://down
+			graph[startx][starty].push_back(edge(startx, starty, startx + 1, starty));
+			creat_maze(graph, isempty, startx + 1, starty);
+			break;
+		case 4://left
+			graph[startx][starty].push_back(edge(startx, starty, startx, starty - 1));
+			creat_maze(graph, isempty, startx, starty - 1);
+			break;
+		default://idk
+			return;
+		}
 	}
 }
 void main() {
