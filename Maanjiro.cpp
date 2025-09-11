@@ -85,7 +85,7 @@ private:
 
 int main() {
 	srand(time(0));
-	grid a(4);
+	grid a(40);
 	a.display();
 	return 0;
 }
