@@ -80,6 +80,7 @@ private:
 		int r2 = neighbour[rd].first;
 		int c2 = neighbour[rd].second;
 		add(r,c,r2,c2);
+
 	}
 	void dfsr(vector<vector<bool>>& v, int r, int c) {
 		while (check(v, r, c)) {
@@ -96,7 +97,7 @@ private:
 };
 
 int main() {
-	int vertex = 10;
+	int vertex = 50;
 	srand(time(0));
 	grid a(vertex);
 	a.display();
@@ -123,9 +124,6 @@ int main() {
 				for (int k = 0; k < a.g[i][j].size(); k++) {
 					int ni = a.g[i][j][k].row;
 					int nj = a.g[i][j][k].col;
-
-					float nx = b + nj * (blockx + b);
-					float ny = b + ni * (blocky + b);
 
 					if (ni == i && nj == j + 1) {
 						DrawRectangle(x + blockx, y, b, blocky, WHITE);
