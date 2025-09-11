@@ -17,7 +17,7 @@ class grid {
 public:
 	vector<vector<vector<edge>>> g;
 	int vertex;
-	grid(int v) {
+	grid(int v){
 		vertex = v;
 		g.resize(v);
 		for (int i = 0; i < v; i++) {
@@ -25,7 +25,7 @@ public:
 		}
 		make();
 	}
-	void display() {
+	void display(){
 		for (int i = 0; i < g.size();i++) {
 			cout << "{";
 			for (int j = 0; j < g[i].size();j++) {
@@ -43,7 +43,7 @@ private:
 	void add(int r, int c, int row, int col) {
 		g[r][c].push_back(edge(row, col));
 	}
-	void make() {
+	void make(){
 		vector<vector<bool>>visited(vertex, vector<bool>(vertex, false));
 		visited[0][0] = true;
 		dfsr(visited, 0, 0);
@@ -58,11 +58,18 @@ private:
 	}
 	void join(vector<vector<bool>>& v, int r, int c) {
 		int rd = rand() % check(v, r, c);
-		if (r != 0 && !v[r - 1][c]) if (rd == 0) add(r, c, r - 1, c); else --rd;
-		if (r != vertex - 1 && !v[r + 1][c]) if (rd == 0) add(r, c, r + 1, c); else --rd;
-		if (c != 0 && !v[r][c - 1]) if (rd == 0) add(r, c, r, c - 1); else --rd;
-		if (c != vertex - 1 && !v[r][c + 1]) if (rd == 0) add(r, c, r, c + 1); else --rd;
-
+		if (r != 0 && !v[r - 1][c])
+			if (rd == 0) add(r, c, r - 1, c);
+			else --rd;
+		if (r != vertex - 1 && !v[r + 1][c])
+			if (rd == 0) add(r, c, r + 1, c);
+			else --rd;
+		if (c != 0 && !v[r][c - 1]) 
+			if (rd == 0) add(r, c, r, c - 1); 
+			else --rd;
+		if (c != vertex - 1 && !v[r][c + 1]) 
+			if (rd == 0) add(r, c, r, c + 1);
+			else --rd;
 	}
 	void dfsr(vector<vector<bool>>& v, int r, int c) {
 		v[r][c] = true;
@@ -75,7 +82,6 @@ private:
 		}
 	}
 };
-
 
 int main() {
 	srand(time(0));
