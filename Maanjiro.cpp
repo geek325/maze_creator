@@ -58,7 +58,7 @@ private:
 		if (c != vertex - 1 && !v[r][c + 1]) count++;
 		return count;
 	}
-	void join(vector<vector<bool>>& v, int r, int c) {
+	void join_rand(vector<vector<bool>>& v, int r, int c) {
 		vector<pair<int,int>>neighbour;
 		if (r != 0 && !v[r - 1][c])
 			neighbour.push_back({ r - 1,c });
@@ -78,7 +78,7 @@ private:
 	void dfsr(vector<vector<bool>>& v, int r, int c) {
 		v[r][c] = true;
 		while (check(v, r, c)) {
-			join(v, r, c);
+			join_rand(v, r, c);
 			for (int i = 0;i < g[r][c].size();i++) {
 				int n = g[r][c][i].row;
 				int m = g[r][c][i].col;
@@ -90,18 +90,23 @@ private:
 };
 
 int main() {
-	int vertex = 10;
+	int vertex = 50;
 	srand(time(0));
 	grid a(vertex);
-	a.display();
+	//a.display();
 	
 
 	int sw = 800;
 	int sh = 800;
-	int b = 2;
+	int b = 3;
 
-	float blockx = (sw - b * 2) / vertex;
-    float blocky = (sh - b * 2) / vertex;
+	float blockx = ((sw - b * (vertex+1)) / vertex);
+	float blocky = ((sh - b * (vertex+1)) / vertex);
+
+	float paddx = (sw - (blockx * vertex + b * (vertex + 1))) / 2;
+	float paddy = (sh - (blocky * vertex + b * (vertex + 1))) / 2;
+
+
 	InitWindow(sw, sh, "maze");
 	while (!WindowShouldClose()) {
 
@@ -111,18 +116,18 @@ int main() {
 
 		for (int i = 0; i < vertex; i++) {
 			for (int j = 0; j < vertex; j++) {
-				float x = b + j * (blockx+b);
-				float y = b + i * (blocky+b);
-				DrawRectangle(x,y, blockx, blocky, WHITE);
+				float x = b+j * (blockx+b) + paddx;
+				float y = b+i * (blocky+b) + paddy;
+				//DrawRectangle(x,y, blockx, blocky, WHITE);
 				for (int k = 0; k < a.g[i][j].size(); k++){
 					int nr = a.g[i][j][k].row;
 					int nc = a.g[i][j][k].col;
 
 					if (nr == i && nc == j + 1) {
-						DrawRectangle(x + blockx, y, b, blocky, WHITE);
+						DrawRectangle(x, y, blockx*2+b, blocky, WHITE);
 					}
 					if (nr == i + 1 && nc == j) {
-						DrawRectangle(x, y + blocky, blockx, b, WHITE);
+						DrawRectangle(x, y, blockx, blocky*2+b, WHITE);
 					}
 				}
 			}
