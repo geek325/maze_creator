@@ -110,7 +110,9 @@ public:
 };
 
 int main() {
-	int vertex = 50;
+	int vertex;
+	cout << "enter size of maze: ";
+	cin >> vertex;
 	srand(time(0));
 	grid a(vertex);
 	//a.display();
