@@ -3,6 +3,7 @@
 #include<cstdlib>
 #include<ctime>
 #include<raylib.h>
+#include <stack>
 using namespace std;
 
 class edge {
@@ -16,7 +17,10 @@ public:
 
 class grid {
 public:
+	vector<vector<bool>>visited;
 	vector<vector<vector<edge>>> g;
+	pair<int,int>curr = { 0,0 };
+	stack<pair<int, int>>btstack;
 	int vertex;
 	grid(int v){
 		vertex = v;
@@ -24,7 +28,9 @@ public:
 		for (int i = 0; i < v; i++) {
 			g[i].resize(v);
 		}
-		make();
+		visited.resize(vertex, vector<bool>(vertex, false));
+		btstack.push({0,0});
+		//make(); //for unanimated maze (pre built)
 	}
 	void display(){
 		for (int i = 0; i < g.size();i++) {
@@ -42,50 +48,64 @@ public:
 
 private:
 	void make() {
-		vector<vector<bool>>visited(vertex, vector<bool>(vertex, false));
 		visited[0][0] = true;
-		dfsr(visited, 0, 0);
+		dfsr();
 	}
 	void addEdge(int r1, int c1, int r2, int c2) {
 		g[r1][c1].push_back(edge(r2, c2));
 		g[r2][c2].push_back(edge(r1, c1));
 	}
-	int check(vector<vector<bool>>& v, int r, int c) {
+	int check(int r, int c) {
 		int count = 0;
-		if (r != 0 && !v[r - 1][c]) count++;
-		if (r != vertex - 1 && !v[r + 1][c]) count++;
-		if (c != 0 && !v[r][c - 1]) count++;
-		if (c != vertex - 1 && !v[r][c + 1]) count++;
+		if (r != 0 && !visited[r - 1][c]) count++;
+		if (r != vertex - 1 && !visited[r + 1][c]) count++;
+		if (c != 0 && !visited[r][c - 1]) count++;
+		if (c != vertex - 1 && !visited[r][c + 1]) count++;
 		return count;
 	}
-	void join_rand(vector<vector<bool>>& v, int r, int c) {
+	void join_rand(int r, int c) {
 		vector<pair<int,int>>neighbour;
-		if (r != 0 && !v[r - 1][c])
+		if (r != 0 && !visited[r - 1][c])
 			neighbour.push_back({ r - 1,c });
-		if (r != vertex - 1 && !v[r + 1][c])
+		if (r != vertex - 1 && !visited[r + 1][c])
 			neighbour.push_back({ r + 1,c });
-		if (c != 0 && !v[r][c - 1])
+		if (c != 0 && !visited[r][c - 1])
 			neighbour.push_back({ r,c - 1 });
-		if (c != vertex - 1 && !v[r][c + 1])
+		if (c != vertex - 1 && !visited[r][c + 1])
 			neighbour.push_back({ r ,c + 1 });
 		
 		int rd = rand() % neighbour.size();
 		int r2 = neighbour[rd].first;
 		int c2 = neighbour[rd].second;
 		addEdge(r,c,r2,c2);
+		curr = {r2,c2};
 
 	}
-	void dfsr(vector<vector<bool>>& v, int r, int c) {
-		v[r][c] = true;
-		while (check(v, r, c)) {
-			join_rand(v, r, c);
+	void dfsr(int r=0, int c=0) {
+		visited[r][c] = true;
+		while (check(r, c)) {
+			join_rand(r, c);
 			for (int i = 0;i < g[r][c].size();i++) {
 				int n = g[r][c][i].row;
 				int m = g[r][c][i].col;
-				if (v[n][m]) continue;
-				dfsr(v, n,m);
+				if (visited[n][m]) continue;
+				dfsr(n,m);
 			}
 		}
+	}
+
+public:
+	void dfs() {
+		visited[curr.first][curr.second] = true;
+		if (check(curr.first, curr.second)) {
+			btstack.push(curr);
+			join_rand(curr.first, curr.second);
+		}
+		else {
+			curr = btstack.top();
+			btstack.pop();
+		}
+
 	}
 };
 
@@ -108,11 +128,13 @@ int main() {
 
 
 	InitWindow(sw, sh, "maze");
+	SetTargetFPS(60);
 	while (!WindowShouldClose()) {
 
+		if(!a.btstack.empty()) a.dfs(); //for animated maze
+
 		BeginDrawing();
-		ClearBackground(WHITE);
-		DrawRectangle(0, 0, sw, sh, BLACK);
+		ClearBackground(BLACK);
 
 		for (int i = 0; i < vertex; i++) {
 			for (int j = 0; j < vertex; j++) {
@@ -122,13 +144,18 @@ int main() {
 				for (int k = 0; k < a.g[i][j].size(); k++){
 					int nr = a.g[i][j][k].row;
 					int nc = a.g[i][j][k].col;
-
-					if (nr == i && nc == j + 1) {
-						DrawRectangle(x, y, blockx*2+b, blocky, WHITE);
+					if (i == a.curr.first && j == a.curr.second) {
+						DrawRectangle(x-b, y-b, blockx+b*2, blocky+b*2, RED);
 					}
-					if (nr == i + 1 && nc == j) {
-						DrawRectangle(x, y, blockx, blocky*2+b, WHITE);
+					else {
+						if (nr == i && nc == j + 1) {
+							DrawRectangle(x, y, blockx * 2 + b, blocky, WHITE);
+						}
+						if (nr == i + 1 && nc == j) {
+							DrawRectangle(x, y, blockx, blocky * 2 + b, WHITE);
+						}
 					}
+					
 				}
 			}
 		}

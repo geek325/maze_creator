@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Maanjiro.cpp">
+    <ClCompile Include="Manvendra.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
